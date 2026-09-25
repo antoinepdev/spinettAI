@@ -1,0 +1,23 @@
+{
+  "skill_name": "error-handling",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Estoy montando una API en Express con TypeScript y arquitectura en capas (controller-service-repository). Quiero implementar el manejo de errores con Problem Details, pero no tengo nada montado aún. ¿Qué estructura de archivos y clases necesito? Dame el ejemplo de la jerarquía de errores y del error handler.",
+      "expected_output": "Explica el patrón de un único errorHandler, la jerarquía AppError con status/message/errors, el builder de Problem Details (RFC 9457) con STATUS_CODES, y el orden de clasificación (librerías externas → AppError → 500). Ofrece los archivos utils/errors.ts y middlewares/errorHandler.ts.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Mi app usa node-telegram-bot-api y los errores me llegan como Error planos con code: 'ETELEGRAM'. En mi errorHandler quiero distinguirlos sin usar any y traducirlos a AppError. ¿Cómo lo hago?",
+      "expected_output": "Propone un type guard (isTelegramApiError) que estrecha a Error & ITelegramError y un mapper (mapTelegramError → AppError | undefined) que decide por error.response.body, usado desde el errorHandler antes del catch-all.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "En mi service de películas lanzo throw new NotFoundError() cuando no existe la película, pero el controller lo captura con try/catch y responde con res.status(404).json({message}). Quiero unificar las respuestas de error. ¿Qué debería cambiar?",
+      "expected_output": "Indica que el controller no debe capturar ni responder el error: con Express 5 el reject del async controller se enruta solo al errorHandler global. Hay que centralizar la respuesta en el errorHandler con Problem Details y quitar el try/catch del controller.",
+      "files": []
+    }
+  ]
+}
