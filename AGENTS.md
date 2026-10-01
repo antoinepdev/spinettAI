@@ -1,21 +1,56 @@
 # AGENTS.md
 
-## Propósito
-spinettAI es el repo público del workflow personal para OpenCode: skills (y en el futuro agentes, commands, plugins) que se distribuyen a los proyectos del autor. Público (MIT) pero personal: sigue las propias convenciones, sin complacer a nadie.
+## Qué es
 
-## Filosofía
-- añadir features solo cuando se necesiten de verdad. Nada de sobre-ingeniería.
-- Si una decisión no está cubierta aquí, preguntar al usuario antes de decidir.
+CLI (Node + TypeScript) que instala skills en el proyecto donde se ejecuta. Entry point: `src/index.ts`. No es librería: todo se ejecuta por terminal.
 
-## Estructura
-- `src/skills/<categoría>/<nombre>/SKILL.md` → FUENTE DE VERDAD de cada skill.
-  - `generic/`: aplicable a cualquier proyecto (ej. commits).
-  - Nuevas categorías solo cuando haya una necesidad real.
-- `.opencode/` → entorno LOCAL de prueba dentro de este repo: mirror de las skills para probarlas aquí. No es fuente de verdad; node_modules/ y package.json están gitignoreados.
+## Comandos (verificados)
 
-## Añadir o editar una skill
-1. Escribir/editar la FUENTE en `src/skills/<categoría>/<nombre>/SKILL.md`.
-2. Sincronizar `.opencode/skills/<nombre>/SKILL.md` para poder probarla aquí.
-3. Probar con `opencode` abierto en este repo.
-- Frontmatter obligatorio: `name` (igual a la carpeta, minúsculas y guiones) y `description` (qué hace Y cuándo se activa, con keywords/filenames concretos).
-- Instrucciones en español; mensajes de commit en inglés.
+- `bun run dev` → `node ./src/index.ts`. Es **interactivo** (inquirer) y necesita TTY, así que no se puede testear de forma automatizada: prueba con un temp dir.
+- `bun run test` → `vitest run`. No hay config de vitest: usa defaults y recoge los `*.test.ts` colocados junto al fuente.
+- Un solo test: `bunx vitest run src/helpers/getSkills.test.ts`
+- Lint/formato: `bunx biome check src` — **solo `src`**. `bun biome check .` falla por formato *preexistente* en `biome.json`, `package.json`, `tsconfig.json` y `content/skills/**/evals.json`.
+- Tipos: `bunx tsc --noEmit` (TypeScript 7 va como peerDependency).
+- Orden al verificar: `biome check src` → `tsc --noEmit` → `bun run test`.
+- `inquirer-select-pro` está pinado a una alpha exacta (`1.0.0-alpha.9`, sin `^`): no la actualices sin avisar.
+
+## No ejecutes la CLI dentro de este repo
+
+- `installSkills` lanza si `./skills` ya existe, y aquí `skills/generic/commits/SKILL.md` **está versionado**: `bun run dev` en este repo falla siempre.
+- `linkSkillsToAgents` **borra** lo que haya en `<agent>/skills/<nombre>` (incluido un directorio real) antes de crear el symlink.
+
+## Flujo
+
+`src/index.ts` orquesta 3 helpers de `src/helpers/` (sin red, fáciles de testear):
+
+1. `getSkills(root)` → `Skill[]`. Escanea 2 niveles (`categoría/skill`), exige `SKILL.md`, ignora carpetas ocultas, devuelve `path` como ruta completa **sin resolver symlinks** y ordena por `path`.
+2. `installSkills(skills, destRoot)` → copia cada skill a `<cwd>/skills/<category>/<name>`, con todo su contenido anidado.
+3. `linkSkillsToAgents({ skills, agents, destRoot })` → symlinks **relativos** en `<destRoot>/<agent.relativePath>/<name>` → `../../skills/<category>/<name>`. Un solo nivel: la categoría se omite porque los agentes solo leen un nivel de carpetas.
+
+Entidades en `src/entities.ts`: `Skill { name, path, category }` e `IAgent { name, relativePath }`.
+
+## Catálogo: `content/skills/` es la fuente de verdad
+
+- `content/skills/<categoría>/<nombre>/SKILL.md`, más carpetas propias (`evals/`, etc.) que se copian tal cual.
+- Una carpeta solo cuenta como skill si tiene `SKILL.md`. El escaneo es de 2 niveles, así que `evals/` nunca aparece como skill.
+- Frontmatter obligatorio: `name` (igual a la carpeta, minúsculas y guiones) y `description` (qué hace **y** cuándo se activa, con keywords/filenames concretos).
+- `.opencode/skills/commits` es un symlink a `skills/generic/commits`: el repo se dogfoodea a sí mismo. En `.opencode/` solo se versionan symlinks de skills; su `node_modules`/`package.json` están gitignoreados.
+
+## Añadir un agente
+
+1. Añadir el nombre al union `IAgent['name']` en `src/entities.ts`.
+2. Añadir su `relativePath` a `supportedAgents` en `src/index.ts`.
+
+No hay más puntos de cambio: el resto se deriva de `agent.relativePath`.
+
+## Convenciones
+
+- Imports con extensión explícita (`.ts`) e `import type` para lo type-only: lo exigen el type-stripping nativo de Node y `verbatimModuleSyntax`.
+- Biome: tabs, comillas simples, sin semicolons, `lineWidth` 130 y `organizeImports` activo. `bunx biome check --write src` corrige formato e imports.
+- Código, comentarios y mensajes al usuario en **español**; mensajes de commit en **inglés**.
+- Helpers con 3+ argumentos usan objeto de parámetros, para que el orden no importe.
+- Tests junto al fuente (`src/helpers/*.test.ts`), con fixtures en `mkdtempSync(tmpdir())` y limpieza en `afterEach`.
+
+## Commits
+
+Lee `.opencode/skills/commits/SKILL.md` antes de commitear: Conventional Commits en inglés, commits atómicos y la regla de que la única autorización para modificar el repo es aprobar el plan con la herramienta `question`.
