@@ -14,6 +14,7 @@ const skills = getSkills(CONTENT_ROOT)
 const selectedSkills = await select({
 	message: 'Selecciona las skills que deseas instalar en el directorio actual:',
 	options: skills.map((skill) => ({ name: skill.name, value: skill })),
+	required: true,
 })
 
 const supportedAgents: IAgent[] = [{ name: 'opencode', relativePath: ['.opencode', 'skills'] }]
@@ -21,6 +22,7 @@ const supportedAgents: IAgent[] = [{ name: 'opencode', relativePath: ['.opencode
 const selectedAgents = await select({
 	message: 'A qué agentes quieres dar soporte:',
 	options: supportedAgents.map((agent) => ({ name: agent.name, value: agent })),
+	required: true,
 })
 
 installSkills(selectedSkills, DEST_ROOT)
