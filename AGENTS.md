@@ -16,7 +16,7 @@ Corolario: evita `preserveTimestamps` y cualquier otra opción de `node:fs` cuyo
 
 ## Comandos (verificados)
 
-- `bun run dev` → `node ./src/index.ts`. Es **interactivo** (inquirer) y necesita TTY, así que no se puede testear de forma automatizada: prueba con un temp dir.
+- `bun run dev` → `bun ./src/index.ts`. Es **interactivo** (inquirer) y necesita TTY, así que no se puede testear de forma automatizada: prueba con un temp dir.
 - `bun run test` → `vitest run`. No hay config de vitest: usa defaults y recoge los `*.test.ts` colocados junto al fuente.
 - Un solo test: `bunx vitest run src/helpers/getSkills.test.ts`
 - Lint/formato: `bunx biome check src` — **solo `src`**. `bun biome check .` falla por formato *preexistente* en `biome.json`, `package.json`, `tsconfig.json` y `content/skills/**/evals.json`.
