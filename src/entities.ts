@@ -5,6 +5,6 @@ export interface Skill {
 }
 
 export interface IAgent {
-	name: 'opencode'
+	name: 'opencode' | 'claude-code' | 'gemini-cli' | 'codex'
 	relativePath: string[]
 }
