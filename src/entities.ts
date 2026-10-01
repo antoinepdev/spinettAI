@@ -1,4 +1,5 @@
 export interface Skill {
 	name: string
-	value: string
+	path: string
+	category: string
 }

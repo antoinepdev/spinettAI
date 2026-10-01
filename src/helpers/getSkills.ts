@@ -1,5 +1,5 @@
 import { existsSync, readdirSync } from 'node:fs'
-import { join, posix } from 'node:path'
+import { join } from 'node:path'
 import type { Skill } from '../entities.ts'
 
 function isVisibleDir(name: string): boolean {
@@ -22,9 +22,9 @@ export function getSkills(root: string): Skill[] {
 			if (!entry.isDirectory() || !isVisibleDir(entry.name)) continue
 			if (!existsSync(join(categoryPath, entry.name, 'SKILL.md'))) continue
 
-			skills.push({ name: entry.name, value: posix.join(category.name, entry.name) })
+			skills.push({ name: entry.name, path: join(categoryPath, entry.name), category: category.name })
 		}
 	}
 
-	return skills.sort((a, b) => a.value.localeCompare(b.value))
+	return skills.sort((a, b) => a.path.localeCompare(b.path))
 }
