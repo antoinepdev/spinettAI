@@ -8,5 +8,9 @@
   },
   "peerDependencies": {
     "typescript": "^7"
+  },
+  "dependencies": {
+    "inquirer-select-pro": "1.0.0-alpha.9"
+  },
   }
 }
