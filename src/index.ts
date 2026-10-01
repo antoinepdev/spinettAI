@@ -17,7 +17,12 @@ const selectedSkills = await select({
 	required: true,
 })
 
-const supportedAgents: IAgent[] = [{ name: 'opencode', relativePath: ['.opencode', 'skills'] }]
+const supportedAgents: IAgent[] = [
+	{ name: 'opencode', relativePath: ['.opencode', 'skills'] },
+	{ name: 'claude-code', relativePath: ['.claude', 'skills'] },
+	{ name: 'gemini-cli', relativePath: ['.gemini', 'skills'] },
+	{ name: 'codex', relativePath: ['.codex', 'skills'] },
+]
 
 const selectedAgents = await select({
 	message: 'A qué agentes quieres dar soporte:',
