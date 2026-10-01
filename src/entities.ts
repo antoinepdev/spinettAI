@@ -3,3 +3,8 @@ export interface Skill {
 	path: string
 	category: string
 }
+
+export interface IAgent {
+	name: 'opencode'
+	relativePath: string[]
+}
