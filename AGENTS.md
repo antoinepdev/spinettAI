@@ -4,6 +4,16 @@
 
 CLI (Node + TypeScript) que instala skills en el proyecto donde se ejecuta. Entry point: `src/index.ts`. No es librería: todo se ejecuta por terminal.
 
+## Plataformas: solo macOS, Linux y WSL
+
+Este proyecto se desarrolla y se ejecuta **exclusivamente en macOS, Linux y WSL** (WSL se trata como Linux). Windows nativo queda **fuera de scope**.
+
+**Nunca compliques el código para dar soporte a Windows.** No añadas fallbacks a `junction`, no introduzcas ramas por `process.platform`, no normalices separadores ni hacks de permisos. Si algo falla en Windows, la respuesta es «no se ejecuta ahí», no un parche.
+
+El motivo es concreto: los symlinks son el corazón de `linkSkillsToAgents`, y los symlinks **relativos** no son viables en Windows sin *Developer Mode* o admin. La única alternativa sin privilegios, `'junction'`, **exige target absoluto** y por tanto contradice el diseño relativo. Soporte real en Windows obligaría a abandonar los symlinks relativos, que es la decisión de diseño que hace posible el auto-dogfooding del repo. No está en scope.
+
+Corolario: evita `preserveTimestamps` y cualquier otra opción de `node:fs` cuyo comportamiento en NTFS no esté garantizado.
+
 ## Comandos (verificados)
 
 - `bun run dev` → `node ./src/index.ts`. Es **interactivo** (inquirer) y necesita TTY, así que no se puede testear de forma automatizada: prueba con un temp dir.
