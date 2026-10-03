@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { join } from 'node:path'
 
 import { select } from 'inquirer-select-pro'

@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Config de publicación: el paquete se distribuye como JS plano, no como TS.
+    // El config de desarrollo (tsconfig.json) se queda con noEmit, así que en el
+    // día a día no se genera ningún fichero; esto solo corre al publicar.
+    "noEmit": false,
+    "target": "ES2022",
+    "rootDir": "src",
+    "outDir": "dist",
+
+    // El fuente importa con extensión explícita (.ts) porque lo exige el
+    // type-stripping nativo de node; en el emit pasa a .js para que el resolver
+    // ESM de node encuentre los ficheros.
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
+}

@@ -1,20 +1,54 @@
 {
   "name": "spinettai-cli",
-  "module": "src/index.ts",
+  "version": "1.0.0",
+  "description": "CLI que instala skills en el proyecto desde el que la ejecutas y las enlaza en los agentes de IA que elijas",
+  "license": "MIT",
+  "author": "Antoine Peña",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/antoinepdev/spinettai-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/antoinepdev/spinettai-cli/issues"
+  },
+  "homepage": "https://github.com/antoinepdev/spinettai-cli#readme",
+  "keywords": [
+    "cli",
+    "skills",
+    "ai",
+    "agents",
+    "opencode",
+    "claude-code",
+    "gemini-cli",
+    "codex"
+  ],
   "type": "module",
-  "devDependencies": {
-    "@biomejs/biome": "^2.5.15",
-    "@types/bun": "latest",
-    "vitest": "^5.0.3"
+  "bin": {
+    "spinettai-cli": "./dist/index.js"
   },
-  "peerDependencies": {
-    "typescript": "^7"
+  "files": [
+    "dist",
+    "content"
+  ],
+  "engines": {
+    "node": ">=20.11"
   },
-  "dependencies": {
-    "inquirer-select-pro": "1.0.0-alpha.9"
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "dev": "bun ./src/index.ts",
-    "test": "vitest run"
+    "build": "tsc -p tsconfig.build.json && chmod +x dist/index.js",
+    "test": "vitest run",
+    "prepublishOnly": "bun run build && bunx biome check src && bunx tsc --noEmit && bun run test"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@types/bun": "latest",
+    "typescript": "^7",
+    "vitest": "^5.0.3"
+  },
+  "dependencies": {
+    "inquirer-select-pro": "1.0.0-alpha.9"
   }
 }
