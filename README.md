@@ -14,30 +14,34 @@ En tres pasos:
 
 ## Requisitos
 
-- **Bun** para ejecutarla.
+- **Node 20.11 o superior**, o **Bun**
 - **macOS, Linux o WSL.** Windows nativo no está soportado: los symlinks que crea son relativos y ahí no funcionan sin permisos de administrador o *Developer Mode*. Si alguna vez falla en Windows, la respuesta es que no se ejecuta ahí.
 - **Una terminal interactiva.** Los dos prompts de selección lo necesitan, así que no vale con scripts ni pipes.
 
 ## Instalación
 
-Clona el repo e instala las dependencias:
+```bash
+bunx spinettai-cli        # bun, sin instalar nada
+npx spinettai-cli         # npm, sin instalar nada
+pnpm dlx spinettai-cli    # pnpm
+yarn dlx spinettai-cli    # yarn
+```
+
+También se puede instalar globalmente, y entonces el comando `spinettai-cli` queda disponible en cualquier directorio:
 
 ```bash
-git clone git@github.com:antoinepdev/spinettAI.git ~/spinettai-cli
-cd ~/spinettai-cli
-bun install
+bun add -g spinettai-cli       # bun
+npm install -g spinettai-cli   # npm
 ```
 
 ## Uso
 
-Muévete al proyecto donde quieras las skills y llama a la CLI desde ahí:
-
 ```bash
 cd ~/mi-proyecto
-bun ~/spinettai-cli/src/index.ts
+spinettai-cli
 ```
 
-El catálogo se lee desde el repo clonado, pero **las skills se instalan en el directorio desde el que llamas al comando**. Por eso puedes tener el repo en `~/spinettai-cli` y ejecutarla desde cualquier proyecto.
+Las skills se instalan en el directorio desde el que se llama al comando, así que solo hay que cambiar de directorio y ejecutarla allí.
 
 Te salen dos prompts:
 
@@ -103,7 +107,6 @@ Dos cosas que conviene saber antes de ejecutarla:
 - **Falla si ya existe un directorio `skills` en el destino.** No se puede reejecutar sobre un proyecto que ya tenga uno; tendrías que renombrarlo o borrarlo antes.
 - **Borra lo que haya en `<agente>/skills/<nombre>` antes de crear el symlink.** Si ya tienes ahí una skill con ese nombre, incluso como directorio real, desaparece. No hay confirmación previa.
 
-Y un apunte de futuro: la instalación por clonación es temporal. Esto acabará siendo un paquete de npm y se instalará con `npx` o `bunx`.
 
 ## Licencia
 
